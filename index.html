@@ -1,0 +1,369 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>สูตรหวยลาว 10 สูตร</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap">
+<style>
+/* Layout: single column workbench — next-draw numbers first, then evidence (ranking, hit map), data entry last */
+:root{
+  --bg:#eef1f6; --surface:#ffffff; --sunk:#f5f7fb; --line:#dde2ec; --ink:#121826; --muted:#5b6475;
+  --accent:#1d3f8f; --accent-soft:#e3eafa; --gold:#b8860b; --gold-soft:#fbefc8;
+  --pos:#17803d; --pos-soft:#dcf2e3; --neg:#b42318; --neg-soft:#fbe3e0;
+  --display:"Chakra Petch","Bai Jamjuree",Tahoma,sans-serif; --body:"IBM Plex Sans Thai","Noto Sans Thai","Leelawadee UI",Tahoma,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0c111d; --surface:#151c2c; --sunk:#111725; --line:#273046; --ink:#e7ebf3; --muted:#97a2b8;
+  --accent:#8fb0ff; --accent-soft:#1c2a4d; --gold:#e3b341; --gold-soft:#3b2f10;
+  --pos:#4ac27a; --pos-soft:#15331f; --neg:#f0786b; --neg-soft:#3d1a17; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0c111d; --surface:#151c2c; --sunk:#111725; --line:#273046; --ink:#e7ebf3; --muted:#97a2b8;
+  --accent:#8fb0ff; --accent-soft:#1c2a4d; --gold:#e3b341; --gold-soft:#3b2f10;
+  --pos:#4ac27a; --pos-soft:#15331f; --neg:#f0786b; --neg-soft:#3d1a17; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:15px/1.55 var(--body);margin:0}
+.wrap{max-width:1060px;margin:0 auto;padding-block:24px 56px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:18px}
+h1,h2{font-family:var(--display);text-wrap:balance;margin:0}
+h1{font-size:28px;letter-spacing:.2px}
+h2{font-size:18px;color:var(--accent)}
+.meta{color:var(--muted);font-size:14px;display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--muted);display:inline-block;margin-right:6px}
+.dot.ok{background:var(--pos)}.dot.warn{background:var(--gold)}
+section{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;display:grid;gap:12px;min-width:0}
+.sub{color:var(--muted);font-size:13px}
+.num{font-family:var(--display);font-variant-numeric:tabular-nums}
+/* next draw */
+.nexthead{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:end;justify-content:space-between}
+.field{display:grid;gap:4px;font-size:13px;color:var(--muted)}
+input,select{font:inherit;color:var(--ink);background:var(--sunk);border:1px solid var(--line);border-radius:8px;padding:7px 10px;min-width:0}
+input:focus-visible,select:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(146px,1fr));gap:10px}
+.card{border:1px solid var(--line);border-radius:12px;padding:12px;display:grid;gap:4px;background:var(--surface)}
+.card.top{border-color:var(--accent);box-shadow:inset 0 3px 0 var(--accent)}
+.card.bench{border-style:dashed;background:var(--sunk)}
+.card .row1{display:flex;justify-content:space-between;align-items:baseline;gap:6px;font-size:12px;color:var(--muted)}
+.card .nm{font-weight:600;font-size:14px;line-height:1.3}
+.card .big{font-family:var(--display);font-size:34px;font-weight:700;letter-spacing:3px;line-height:1.1;font-variant-numeric:tabular-nums}
+.card .pair{display:flex;gap:14px;font-size:13px;color:var(--muted)}
+.card .pair b{font-family:var(--display);font-size:19px;color:var(--ink);margin-left:4px}
+.pl{font-family:var(--display);font-weight:600;font-variant-numeric:tabular-nums}
+.pl.pos{color:var(--pos)}.pl.neg{color:var(--neg)}
+/* last result */
+.last{display:flex;flex-wrap:wrap;gap:14px 24px;align-items:center}
+.balls{display:flex;gap:6px}
+.ball{width:38px;height:44px;border-radius:9px;background:var(--accent);color:var(--surface);display:grid;place-items:center;font:700 24px var(--display)}
+.ball.dim{background:var(--accent-soft);color:var(--accent)}
+.parts{display:flex;gap:18px;font-size:13px;color:var(--muted)}
+.parts b{display:block;font:700 22px var(--display);color:var(--ink)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-size:13px;border-radius:999px;padding:3px 10px;border:1px solid var(--line);background:var(--sunk)}
+.chip.t{background:var(--gold-soft);border-color:var(--gold)}
+.chip.b{background:var(--pos-soft);border-color:var(--pos)}
+/* settings */
+details{border-top:1px solid var(--line);padding-top:10px}
+summary{cursor:pointer;color:var(--accent);font-weight:600;font-size:14px}
+.settings{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-top:10px}
+.settings label{display:grid;gap:4px;font-size:13px;color:var(--muted)}
+.settings .chk{display:flex;gap:6px;align-items:center}
+/* tables */
+.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{padding:7px 8px;border-bottom:1px solid var(--line);text-align:center;white-space:nowrap}
+th{font-size:12px;color:var(--muted);font-weight:600;background:var(--surface);position:sticky;top:0}
+td.l,th.l{text-align:left}
+tr.bench td{background:var(--sunk)}
+td.name{position:sticky;left:0;background:var(--surface);text-align:left;font-weight:500}
+tr.bench td.name{background:var(--sunk)}
+.verdict{font-size:12px;border-radius:999px;padding:2px 8px;white-space:nowrap}
+.v-good{background:var(--pos-soft);color:var(--pos)}.v-luck{background:var(--gold-soft);color:var(--gold)}.v-bad{background:var(--neg-soft);color:var(--neg)}.v-bench{background:var(--accent-soft);color:var(--accent)}
+.hm td{font-size:12px;padding:5px 4px;min-width:46px}
+.hm td.h-T{background:var(--gold);color:#111;font-weight:700}
+.hm td.h-D{background:var(--gold-soft);font-weight:600}
+.hm td.h-2{background:var(--pos-soft);color:var(--pos);font-weight:700}
+.hm td.h-R{color:var(--muted)}
+.hm th.d{font-size:11px;line-height:1.25}
+.legend{display:flex;flex-wrap:wrap;gap:10px 16px;font-size:12px;color:var(--muted)}
+.sw{display:inline-block;width:14px;height:14px;border-radius:3px;vertical-align:-2px;margin-right:4px}
+/* data */
+.addform{display:flex;flex-wrap:wrap;gap:10px;align-items:end}
+button{font:600 14px var(--body);border-radius:8px;padding:8px 14px;border:1px solid var(--accent);background:var(--accent);color:var(--surface);cursor:pointer}
+button.ghost{background:transparent;color:var(--accent)}
+button.danger{border-color:var(--neg);color:var(--neg);background:transparent;padding:4px 10px;font-size:13px}
+button:disabled{opacity:.5;cursor:not-allowed}
+.msg{font-size:13px}.msg.err{color:var(--neg)}.msg.ok{color:var(--pos)}
+.empty{padding:28px 12px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:12px}
+.note{font-size:13px;color:var(--muted);border-left:3px solid var(--accent);padding:4px 0 4px 10px}
+@media (prefers-reduced-motion:no-preference){.card{transition:border-color .15s}}
+@media (max-width:520px){h1{font-size:23px}.card{padding:10px}.card .big{font-size:27px;letter-spacing:2px}.ball{width:32px;height:38px;font-size:20px}}
+</style>
+</head>
+<body>
+
+
+<div class="wrap">
+  <header style="display:grid;gap:6px">
+    <h1>สูตรหวยลาว 10 สูตร</h1>
+    <div class="meta" id="meta"><span><span class="dot" id="dot"></span><span id="status">กำลังโหลดผลหวย…</span></span><span id="updated"></span></div>
+  </header>
+
+  <section aria-labelledby="h-next">
+    <div class="nexthead">
+      <div style="display:grid;gap:2px"><h2 id="h-next">เลขงวดถัดไป</h2><div class="sub" id="nextsub">คำนวณจากงวดล่าสุดในฐานข้อมูล เรียงตามผลย้อนหลัง</div></div>
+      <label class="field" for="nextdate">วันที่งวด (ใช้กับสูตร 10)<input id="nextdate" inputmode="numeric" placeholder="วว/ดด/2569" style="width:140px"></label>
+    </div>
+    <div class="cards" id="cards"><div class="empty">เลขของทั้ง 10 สูตรจะขึ้นตรงนี้เมื่อโหลดผลหวยเสร็จ</div></div>
+    <p class="note" id="dupnote" hidden></p>
+  </section>
+
+  <section aria-labelledby="h-last">
+    <h2 id="h-last">งวดล่าสุด</h2>
+    <div id="last"><div class="empty">ยังไม่มีผลหวยในฐานข้อมูล</div></div>
+  </section>
+
+  <section aria-labelledby="h-rank">
+    <div style="display:grid;gap:2px"><h2 id="h-rank">ผลย้อนหลังของแต่ละสูตร</h2><div class="sub" id="ranksub"></div></div>
+    <div class="scroll"><table id="rank"></table></div>
+    <details>
+      <summary>ตั้งค่าเงินซื้อและอัตราจ่าย</summary>
+      <div class="settings" id="settings"></div>
+      <p class="sub">ค่าที่ตั้งจะจำไว้ในเครื่องนี้ อัตราวิ่งบน 3 และวิ่งล่าง 4 เป็นค่าตั้งต้น แก้ให้ตรงกับที่ซื้อจริง</p>
+    </details>
+  </section>
+
+  <section aria-labelledby="h-map">
+    <div style="display:grid;gap:2px"><h2 id="h-map">20 งวดล่าสุด: สูตรไหนเข้าอะไร</h2><div class="sub">ในช่องคือสิ่งที่ถูก ช่องว่าง = ไม่ถูกเลย</div></div>
+    <div class="legend"><span><span class="sw" style="background:var(--gold)"></span>3 ตัวตรง</span><span><span class="sw" style="background:var(--gold-soft)"></span>โต๊ด</span><span><span class="sw" style="background:var(--pos-soft)"></span>2 ตัวบน/ล่าง</span><span>วิ่ง = ถูกเลขวิ่งอย่างเดียว</span></div>
+    <div class="scroll"><table class="hm" id="hm"></table></div>
+  </section>
+
+  <section aria-labelledby="h-data">
+    <h2 id="h-data">ผลหวยในฐานข้อมูล</h2>
+    <p class="note">ผลหวยอัปเดตอัตโนมัติทุกคืนประมาณ 00:41 น. ถ้าผลออกแล้วแต่ยังไม่อัปเดต ใส่ผลเองได้ที่นี่ (เก็บไว้ในเครื่องนี้เท่านั้น และจะหายไปเองเมื่อข้อมูลจริงมาถึง)</p>
+    <form class="addform" id="addform">
+      <label class="field" for="adddate">วันที่ (พ.ศ.)<input id="adddate" placeholder="วว/ดด/2569" inputmode="numeric" style="width:140px" required></label>
+      <label class="field" for="addnum">เลข 6 ตัว<input id="addnum" placeholder="808098" inputmode="numeric" maxlength="6" style="width:120px" required></label>
+      <button type="submit" id="addbtn">บันทึกผล</button>
+      <span class="msg" id="addmsg" role="status"></span>
+    </form>
+        <div class="scroll"><table id="recent"></table></div>
+  </section>
+
+  <p class="sub">ทุกสูตรคำนวณจากผลของงวดก่อนหน้าเท่านั้น ผลย้อนหลังไม่ได้บอกว่างวดหน้าสูตรไหนจะเข้า แต่ละงวดสุ่มอิสระ ทุกสูตรจึงมีโอกาสเท่ากับการเดาสุ่ม ผลหวยจาก lottery.kapook.com · <a href="https://github.com/kimyungsay-Kim/lao-lottery-formula" style="color:var(--accent)">ดูโค้ดบน GitHub</a></p>
+</div>
+
+<script>
+// ===== Lao lottery formula engine (mirrors the Excel workbook exactly) =====
+const NAMES=[
+ ['ซ้ำงวดก่อน','3 ตัวบน และ 2 ตัวบนงวดก่อน · วิ่ง = หลักหน่วยของเลข 6 ตัว'],
+ ['กลับเลข','กลับ 3 ตัวบน และ 2 ตัวบนงวดก่อน · วิ่ง = หลักร้อย'],
+ ['เลื่อน +1','บวก 1 ทุกหลักของ 3 ตัวบนงวดก่อน (9 → 0)'],
+ ['ผลรวม 6 หลัก','ผลบวกเลข 6 ตัวงวดก่อน · วิ่ง = หลักหน่วยของผลรวม'],
+ ['คู่ลบ','|หลัก1−6| |หลัก2−5| |หลัก3−4| ของเลข 6 ตัวงวดก่อน'],
+ ['คูณบน×ล่าง','2 ตัวบน × 2 ตัวล่างงวดก่อน เอา 3 หลักท้าย'],
+ ['เลขร้อน 20 งวด','3 เลขโดดที่ออกบ่อยสุดในเลข 6 ตัว 20 งวดล่าสุด'],
+ ['เลขเย็น 20 งวด','3 เลขโดดที่ออกน้อยสุดใน 3 ตัวบน 20 งวดล่าสุด'],
+ ['บวกสองงวด','บวกหลักต่อหลัก 3 ตัวบนของ 2 งวดล่าสุด (เอาหลักหน่วย)'],
+ ['เลขวันที่','หลักหน่วยของเดือน + วันที่ของงวด (09/11 → 109)'],
+ ['เดาสุ่ม','เลขที่ไม่เกี่ยวกับผลหวยเลย ใช้เป็นเส้นวัด']
+];
+const KEYS=['T','D','B','L','RB','RL'];
+const b3=n=>n.slice(-3), b2=n=>n.slice(-2), l2=n=>n.slice(2,4);
+const pad=(v,k)=>String(v).padStart(k,'0');
+const sortKey=s=>s.split('').sort().join('');
+function predict(draws,i,date){ // predict draw index i using draws[0..i-1]
+  const out=[]; const p=draws[i-1]; const r=i+2;
+  if(!p){ for(let k=0;k<11;k++) out.push(null); return out; }
+  const P6=p.n,P3=b3(P6),P2=b2(P6),PL=l2(P6);
+  out.push({t:P3,d:P2,r:P6[5]});
+  out.push({t:P3[2]+P3[1]+P3[0],d:P2[1]+P2[0],r:P3[0]});
+  {const t=[...P3].map(c=>(+c+1)%10).join(''); out.push({t,d:t.slice(1),r:t[2]});}
+  {const s=[...P6].reduce((a,c)=>a+ +c,0); out.push({t:(s%10)+pad(s,2),d:pad(s,2),r:String(s%10)});}
+  {const t=[[0,5],[1,4],[2,3]].map(([a,b])=>Math.abs(P6[a]-P6[b])).join(''); out.push({t,d:t.slice(1),r:t[0]});}
+  {const t=pad((+P2*+PL)%1000,3); out.push({t,d:t.slice(1),r:t[2]});}
+  if(i>=20){
+    const w=draws.slice(i-20,i);
+    const c6=Array(10).fill(0), c3=Array(10).fill(0);
+    w.forEach(x=>{[...x.n].forEach(c=>c6[c]++);[...b3(x.n)].forEach(c=>c3[c]++);});
+    const hot=[...Array(10).keys()].sort((a,b)=>c6[b]-c6[a]||a-b).slice(0,3);
+    const cold=[...Array(10).keys()].sort((a,b)=>c3[a]-c3[b]||a-b).slice(0,3);
+    out.push({t:hot.join(''),d:hot.slice(0,2).join(''),r:String(hot[0])});
+    out.push({t:cold.join(''),d:cold.slice(0,2).join(''),r:String(cold[0])});
+  } else { out.push(null); out.push(null); }
+  if(i>=2){const q=b3(draws[i-2].n); const t=[0,1,2].map(j=>(+P3[j]+ +q[j])%10).join(''); out.push({t,d:t.slice(1),r:t[2]});} else out.push(null);
+  if(date){const dd=date.slice(0,2),mm=date.slice(3,5); out.push({t:mm[1]+dd,d:dd,r:dd[1]});} else out.push(null);
+  out.push({t:pad(r*271%1000,3),d:pad(r*37%100,2),r:String(r*7%10)});
+  return out;
+}
+function hitsOf(pred,n){
+  const T=b3(n),B=b2(n),L=l2(n);
+  return {T:pred.t===T,D:sortKey(pred.t)===sortKey(T),B:pred.d===B,L:pred.d===L,RB:T.includes(pred.r),RL:L.includes(pred.r)};
+}
+function analyze(draws,stake,rate,nextDate){
+  const N=draws.length, cost=KEYS.reduce((a,k)=>a+stake[k],0);
+  const F=NAMES.map(()=>({cost:0,win:0,pl:0,max:0,hits:{T:0,D:0,B:0,L:0,RB:0,RL:0},n:0,minCum:0,cum:[]}));
+  const rows=[];
+  for(let i=1;i<N;i++){
+    const preds=predict(draws,i,draws[i].date); const row={i,draw:draws[i],res:[]};
+    preds.forEach((p,k)=>{
+      if(!p){row.res.push(null);return;}
+      const h=hitsOf(p,draws[i].n); const tested=i>=20;
+      const prize=KEYS.reduce((a,key)=>a+(h[key]?stake[key]*rate[key]:0),0);
+      row.res.push({p,h,prize,tested});
+      if(tested){const f=F[k]; f.n++; f.cost+=cost; f.win+=prize; f.pl+=prize-cost; f.max=Math.max(f.max,prize);
+        KEYS.forEach(key=>{if(h[key])f.hits[key]++;}); f.minCum=Math.min(f.minCum,f.pl); f.cum.push(f.pl);}
+    });
+    rows.push(row);
+  }
+  const next=predict(draws,N,nextDate);
+  return {F,rows,next,cost};
+}
+
+const TYPES=[['T','3 ตัวตรง',1000],['D','3 ตัวโต๊ด',150],['B','2 ตัวบน',100],['L','2 ตัวล่าง',100],['RB','วิ่งบน',3],['RL','วิ่งล่าง',4]];
+const $=id=>document.getElementById(id);
+let DRAWS=[], canEdit=false, pendingDel=null;
+// ---- settings (per-viewer, localStorage) ----
+const DEF={stake:10,on:{T:1,D:1,B:1,L:1,RB:1,RL:1},rate:{T:1000,D:150,B:100,L:100,RB:3,RL:4}};
+let S=JSON.parse(JSON.stringify(DEF));
+try{const s=JSON.parse(localStorage.getItem('laoSettings')||'null'); if(s&&s.rate) S=Object.assign(S,s);}catch(e){}
+function saveS(){try{localStorage.setItem('laoSettings',JSON.stringify(S))}catch(e){}}
+function stakeObj(){const o={};KEYS.forEach(k=>o[k]=S.on[k]?S.stake:0);return o;}
+function buildSettings(){
+  const el=$('settings'); el.innerHTML='';
+  const st=document.createElement('label'); st.htmlFor='stake'; st.innerHTML='ซื้อตัวละ (บาท)';
+  const sel=document.createElement('select'); sel.id='stake';
+  for(let v=1;v<=10;v++){const o=document.createElement('option');o.value=v;o.textContent=v+' บาท';if(v==S.stake)o.selected=true;sel.appendChild(o);}
+  sel.onchange=()=>{S.stake=+sel.value;saveS();render();}; st.appendChild(sel); el.appendChild(st);
+  TYPES.forEach(([k,lab])=>{
+    const w=document.createElement('label'); w.htmlFor='rate-'+k;
+    const top=document.createElement('span'); top.className='chk';
+    const cb=document.createElement('input'); cb.type='checkbox'; cb.id='on-'+k; cb.checked=!!S.on[k]; cb.onchange=()=>{S.on[k]=cb.checked?1:0;saveS();render();};
+    const t=document.createElement('span'); t.textContent='ซื้อ'+lab+' · จ่ายบาทละ';
+    top.append(cb,t);
+    const inp=document.createElement('input'); inp.type='number'; inp.min=0; inp.id='rate-'+k; inp.value=S.rate[k];
+    inp.onchange=()=>{S.rate[k]=Math.max(0,+inp.value||0);saveS();render();};
+    w.append(top,inp); el.appendChild(w);
+  });
+  const rs=document.createElement('button'); rs.type='button'; rs.className='ghost'; rs.textContent='คืนค่าเริ่มต้น';
+  rs.onclick=()=>{S=JSON.parse(JSON.stringify(DEF));saveS();buildSettings();render();}; el.appendChild(rs);
+}
+// ---- dates ----
+const TH_D=['อาทิตย์','จันทร์','อังคาร','พุธ','พฤหัส','ศุกร์','เสาร์'];
+function toJs(d){const [dd,mm,yy]=d.split('/').map(Number);return new Date(yy-543,mm-1,dd);}
+function fromJs(x){return String(x.getDate()).padStart(2,'0')+'/'+String(x.getMonth()+1).padStart(2,'0')+'/'+(x.getFullYear()+543);}
+function nextDrawDate(d){const x=toJs(d);do{x.setDate(x.getDate()+1);}while(x.getDay()===0||x.getDay()===6);return fromJs(x);}
+function validDate(s){if(!/^\d{2}\/\d{2}\/25\d{2}$/.test(s))return false;const x=toJs(s);return fromJs(x)===s;}
+function docId(d){const [dd,mm,yy]=d.split('/');return 'd'+yy+mm+dd;}
+const fmt=v=>(v>0?'+':'')+v.toLocaleString('en-US');
+const plc=v=>v>0?'pl pos':v<0?'pl neg':'pl';
+let userNextDate=null;
+// ---- render ----
+function render(){
+  if(!DRAWS.length){return;}
+  const last=DRAWS[DRAWS.length-1];
+  const nd=userNextDate&&validDate(userNextDate)?userNextDate:nextDrawDate(last.date);
+  if(document.activeElement!==$('nextdate')) $('nextdate').value=nd;
+  const A=analyze(DRAWS,stakeObj(),S.rate,nd);
+  const order=[...Array(11).keys()].sort((a,b)=>A.F[b].pl-A.F[a].pl||a-b);
+  $('nextsub').textContent='งวด '+TH_D[toJs(nd).getDay()]+' '+nd+' · คำนวณจากงวด '+last.date+' ('+last.n+') · เรียงตามผลย้อนหลัง';
+  // cards
+  const cards=$('cards'); cards.innerHTML='';
+  let rank=0;
+  order.forEach(k=>{
+    const p=A.next[k]; const f=A.F[k]; const bench=k===10; if(!bench) rank++;
+    const c=document.createElement('div'); c.className='card'+(bench?' bench':'')+(!bench&&rank===1?' top':'');
+    c.innerHTML=`<div class="row1"><span>${bench?'เส้นวัด':'อันดับ '+rank}</span><span class="${plc(f.pl)}">${fmt(f.pl)}</span></div>
+      <div class="nm">${bench?'':'สูตร '+(k+1)+' '}${NAMES[k][0]}</div>
+      <div class="big">${p?p.t:'–'}</div>
+      <div class="pair"><span>2 ตัว<b>${p?p.d:'–'}</b></span><span>วิ่ง<b>${p?p.r:'–'}</b></span></div>`;
+    c.title=NAMES[k][1]; cards.appendChild(c);
+  });
+  const cnt={}; A.next.slice(0,10).forEach((p,k)=>{if(p)(cnt[p.t]=cnt[p.t]||[]).push(k+1)});
+  const dups=Object.entries(cnt).filter(([t,ks])=>ks.length>1);
+  $('dupnote').hidden=!dups.length;
+  $('dupnote').textContent=dups.length?'เลขซ้ำกันหลายสูตร: '+dups.map(([t,ks])=>t+' (สูตร '+ks.join(', ')+')').join(' · ')+' — การซ้ำกันไม่ได้เพิ่มโอกาส เพราะทุกสูตรคำนวณจากเลขงวดก่อนชุดเดียวกัน':'';
+  // last result
+  const lr=A.rows[A.rows.length-1];
+  const n=last.n; const T=n.slice(-3),B=n.slice(-2),L=n.slice(2,4);
+  const chips=[];
+  lr.res.forEach((x,k)=>{ if(!x||k===10)return; const h=x.h; const got=[];
+    if(h.T)got.push('3 ตัวตรง'); else if(h.D)got.push('โต๊ด'); if(h.B)got.push('2 บน'); if(h.L)got.push('2 ล่าง'); if(!got.length&&(h.RB||h.RL))got.push('วิ่ง');
+    if(got.length){const cls=h.T||h.D?'t':(h.B||h.L)?'b':''; chips.push(`<span class="chip ${cls}">สูตร ${k+1} · ${got.join(' + ')}</span>`);} });
+  $('last').innerHTML=`<div class="last">
+     <div style="display:grid;gap:6px"><div class="sub">${TH_D[toJs(last.date).getDay()]} ${last.date}</div>
+     <div class="balls">${[...n].map((d,i)=>`<span class="ball${i<2?' dim':''}">${d}</span>`).join('')}</div></div>
+     <div class="parts"><span>3 ตัวบน<b>${T}</b></span><span>2 ตัวบน<b>${B}</b></span><span>2 ตัวล่าง<b>${L}</b></span></div></div>
+     <div style="display:grid;gap:6px"><div class="sub">สูตรที่เข้างวดนี้</div><div class="chips">${chips.join('')||'<span class="sub">ไม่มีสูตรไหนเข้าเลย</span>'}</div></div>`;
+  // rank table
+  const N=A.F[0].n, cost=A.cost;
+  $('ranksub').textContent=`ทดสอบ ${N} งวด · งวดละ ${cost} บาทต่อสูตร (ตัวละ ${S.stake} บาท) · ลงทุนสูตรละ ${(N*cost).toLocaleString('en-US')} บาท`;
+  const exp={T:N/1000,D:N*6/1000,B:N/100,L:N/100,RB:N*(1-.9**3),RL:N*(1-.9**2)};
+  let h=`<thead><tr><th class="l">สูตร</th><th>กำไร/ขาดทุน</th><th>ตัดก้อนใหญ่สุดออก</th><th>สรุป</th><th>ติดลบลึกสุด</th>${TYPES.map(t=>`<th>ถูก${t[1].replace('3 ตัว','').replace('2 ตัว','2')}</th>`).join('')}</tr></thead><tbody>`;
+  order.forEach(k=>{const f=A.F[k]; const bench=k===10; const cut=f.pl-f.max;
+    const v=bench?['v-bench','เส้นวัด']:f.pl<0?['v-bad','ขาดทุน']:cut<=0?['v-luck','กำไรเพราะฟลุก']:['v-good','กำไรแม้ตัดก้อนใหญ่'];
+    h+=`<tr class="${bench?'bench':''}"><td class="name">${bench?'':'สูตร '+(k+1)+' '}${NAMES[k][0]}</td><td class="${plc(f.pl)}">${fmt(f.pl)}</td><td class="${plc(cut)}">${fmt(cut)}</td><td><span class="verdict ${v[0]}">${v[1]}</span></td><td class="${plc(f.minCum)}">${fmt(f.minCum)}</td>${KEYS.map(key=>`<td class="num">${f.hits[key]||'–'}</td>`).join('')}</tr>`;});
+  h+=`<tr><td class="name sub" style="font-weight:400">ถ้าเดาสุ่ม ควรถูกประมาณ</td><td colspan="4"></td>${KEYS.map(key=>`<td class="sub">${exp[key].toFixed(1)}</td>`).join('')}</tr></tbody>`;
+  $('rank').innerHTML=h;
+  // hit map
+  const rows=A.rows.slice(-20);
+  let m='<thead><tr><th class="l" style="left:0;position:sticky;z-index:2">สูตร</th>'+rows.map(r=>`<th class="d">${r.draw.date.slice(0,5)}<br><span class="num">${r.draw.n.slice(-3)}/${r.draw.n.slice(2,4)}</span></th>`).join('')+'<th>เข้า</th></tr></thead><tbody>';
+  order.forEach(k=>{let c=0; m+=`<tr class="${k===10?'bench':''}"><td class="name">${k===10?'เดาสุ่ม':'สูตร '+(k+1)}</td>`;
+    rows.forEach(r=>{const x=r.res[k]; if(!x){m+='<td></td>';return;} const hh=x.h; let cls='',t='';
+      if(hh.T){cls='h-T';t='ตรง';} else if(hh.D){cls='h-D';t='โต๊ด';}
+      const two=[hh.B?'2บน':'',hh.L?'2ล่าง':''].filter(Boolean).join(' ');
+      if(two){t=(t?t+' ':'')+two; if(!cls)cls='h-2';}
+      if(!t&&(hh.RB||hh.RL)){t='วิ่ง';cls='h-R';}
+      if(t)c++; m+=`<td class="${cls}" title="${x.p.t} / ${x.p.d} / วิ่ง ${x.p.r}">${t}</td>`;});
+    m+=`<td class="num">${c}</td></tr>`;});
+  $('hm').innerHTML=m+'</tbody>';
+  // recent data
+  const rec=DRAWS.slice(-10).reverse();
+  $('recent').innerHTML='<thead><tr><th class="l">วันที่</th><th>เลข 6 ตัว</th><th>3 บน</th><th>2 ล่าง</th><th>ที่มา</th>'+(canEdit?'<th></th>':'')+'</tr></thead><tbody>'+
+    rec.map((d,i)=>`<tr><td class="l">${TH_D[toJs(d.date).getDay()]} ${d.date}</td><td class="num">${d.n}</td><td class="num">${d.n.slice(-3)}</td><td class="num">${d.n.slice(2,4)}</td><td class="sub">${d.src==='local'?'ใส่เองในเครื่องนี้':'อัตโนมัติ'}</td>${canEdit?`<td>${d.src==='local'?`<button class="danger" data-del="${d.id}">${pendingDel===d.id?'กดอีกครั้งเพื่อลบ':'ลบ'}</button>`:''}</td>`:''}</tr>`).join('')+'</tbody>';
+  document.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>delDraw(b.dataset.del));
+  $('status').textContent=`${DRAWS.length} งวด · ล่าสุด ${last.date}`;
+}
+$('nextdate').addEventListener('change',e=>{const v=e.target.value.trim(); if(validDate(v)){userNextDate=v;render();} else {userNextDate=null;render();}});
+// ---- data (static: draws.json + per-device additions) ----
+let SERVER=[], LOCAL=[];
+try{LOCAL=JSON.parse(localStorage.getItem('laoLocalDraws')||'[]')||[]}catch(e){LOCAL=[]}
+function saveLocal(){try{localStorage.setItem('laoLocalDraws',JSON.stringify(LOCAL))}catch(e){}}
+function merge(){
+  const have=new Set(SERVER.map(d=>d.id));
+  LOCAL=LOCAL.filter(d=>!have.has(d.id)); saveLocal();
+  DRAWS=SERVER.concat(LOCAL).filter(x=>x&&/^\d{6}$/.test(x.n)&&validDate(x.date)).sort((a,b)=>a.id<b.id?-1:1);
+  if(!$('adddate').value&&DRAWS.length) $('adddate').value=nextDrawDate(DRAWS[DRAWS.length-1].date);
+  if(DRAWS.length) render();
+}
+canEdit=true;
+async function delDraw(id){
+  if(!LOCAL.some(d=>d.id===id)) return;
+  if(pendingDel!==id){pendingDel=id;render();setTimeout(()=>{if(pendingDel===id){pendingDel=null;render();}},4000);return;}
+  pendingDel=null; LOCAL=LOCAL.filter(d=>d.id!==id); saveLocal(); merge();
+}
+$('addform').addEventListener('submit',e=>{
+  e.preventDefault(); const d=$('adddate').value.trim(), n=$('addnum').value.trim(); const msg=$('addmsg');
+  if(!validDate(d)){msg.className='msg err';msg.textContent='วันที่ต้องเป็นแบบ วว/ดด/2569';return;}
+  if(!/^\d{6}$/.test(n)){msg.className='msg err';msg.textContent='เลขต้องมี 6 หลักพอดี (มี 0 นำหน้าได้)';return;}
+  const id=docId(d);
+  if(SERVER.some(x=>x.id===id)){msg.className='msg err';msg.textContent='งวด '+d+' มีผลจริงอยู่แล้ว';return;}
+  LOCAL=LOCAL.filter(x=>x.id!==id).concat([{id,date:d,n,src:'local'}]); saveLocal();
+  msg.className='msg ok'; msg.textContent='ใส่งวด '+d+' ในเครื่องนี้แล้ว'; $('addnum').value=''; $('adddate').value=nextDrawDate(d); merge();
+});
+(async()=>{
+  buildSettings();
+  try{
+    const r=await fetch('draws.json?t='+Date.now(),{cache:'no-store'});
+    if(!r.ok) throw new Error(r.status);
+    const j=await r.json();
+    SERVER=(j.draws||j).map(x=>({id:docId(x.date),date:x.date,n:x.n,src:'auto'}));
+    $('dot').className='dot ok';
+    if(j.updated) $('updated').textContent='อัปเดตข้อมูลล่าสุด '+j.updated;
+  }catch(e){$('dot').className='dot warn';$('status').textContent='โหลดผลหวยไม่สำเร็จ ลองรีเฟรชหน้านี้';}
+  merge();
+})();
+</script>
+
+</body>
+</html>
